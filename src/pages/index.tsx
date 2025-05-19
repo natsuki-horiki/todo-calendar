@@ -7,7 +7,8 @@ import React, { useState } from "react";
 //fullcalendar関連のプラグイン
 import FullCalendar from "@fullcalendar/react"; // FullCalendarをインポート
 import timeGridWeek from "@fullcalendar/timegrid"; // timeGridプラグインをインポート
-import interactionPlugin, { Draggable, DropArg } from '@fullcalendar/interaction'
+import interactionPlugin from "@fullcalendar/interaction";
+import { EventInput } from "fullcalendar/index.js";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,8 +21,38 @@ const geistMono = Geist_Mono({
 });
 
 export default function Home() {
-  const [events,setEvents]=useState([
-    
+  //表示イベント例
+  const [events,setEvents]=useState<EventInput>([
+    {
+        id: '1',
+        title: 'Qiita書く',
+        description: 'リンクアンドモチベーションのアドベントカレンダーを書く',
+        start: '2025-05-21',
+        end: '2025-05-23',
+        backgroundColor: 'green',
+        borderColor: 'red',
+        editable: true
+    },
+    {
+        id: '2',
+        title: 'Qiita投稿',
+        description: 'リンクアンドモチベーションのアドベントカレンダーを投稿する',
+        start: '2025-05-18T10:00:00',
+        end: '2025-05-18T15:00:00',
+        backgroundColor: 'green',
+        borderColor: 'red',
+        editable: true
+    },
+    {
+        id: '3',
+        title: '買い物',
+        description: 'リンクアンドモチベーションのアドベントカレンダーを投稿する',
+        start: '2025-05-20T03:00:00',
+        end: '2025-05-20T10:00:00',
+        backgroundColor: 'green',
+        borderColor: 'red',
+        editable: true
+    }
   ]);
 
   return (
@@ -32,20 +63,24 @@ export default function Home() {
         <h2 className="text-xl font-bold mb-4 text-center">ToDoリスト</h2>
         {/* 中のリスト要素 */}
         <ul className="space-y-2">
-          <label className="flex items-center space-x-2">
-            <input type="checkbox" />
-            <span>ミーティング準備</span>
-          </label>
-          <label className="flex items-center space-x-2">
-            <input type="checkbox" />
-            <span>資料提出</span>
-          </label>
+          {events.map((event:EventInput)=>(
+            <li key={event.id}>
+              <label className="flex items-center space-x-2">
+                <input type="checkbox" />
+                <span>{event.title}</span>
+              </label>
+            </li>
+          ))}
         </ul>
       </div>
       
       {/* カレンダー部分（右） */}
       <div className="w-3/4 p-4">
-        <FullCalendar plugins={[timeGridWeek,interactionPlugin]} initialView="timeGridWeek" />
+        <FullCalendar
+          plugins={[timeGridWeek, interactionPlugin]}
+          initialView="timeGridWeek"
+          events={events}
+        />
       </div>
     </div>
   );
