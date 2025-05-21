@@ -23,15 +23,27 @@ const geistMono = Geist_Mono({
 
 export default function Home() {
   const [showForm, setShowForm] = useState(false); // フォームの表示状態
-  const [newEventStart, setNewEventStart] = useState(''); // クリックされた日時
-  const [newEventEnd, setNewEventEnd] = useState(''); // クリックされた日時
+  const [newEventSDate, setNewEventStartDate] = useState(''); // クリックされた日付
+  const [newEventEDate, setNewEventEndDate] = useState(''); // クリックされた日付
+  const [newEventSTime, setNewEventStartTime] = useState(''); // クリックされた日付
+  const [newEventETime, setNewEventEndTime] = useState(''); // クリックされた日付
   const [title, setTitle] = useState(''); // イベントのタイトル入力
   
-
+//日付がクリックされた際の処理
   const handleDateClick = (info: DateClickArg) => {
-    alert(`クリックされた日付: ${info.dateStr}`);
-    setNewEventStart(info.dateStr); //dateStrをeventStartに与えている
-    setNewEventEnd(info.dateStr);  //dateStrをeventStopに与えている
+    const fullDateStr = info.dateStr; // 例: "2025-05-19T04:00:00+09:00"
+    alert(`クリックされた日付: ${fullDateStr}`);
+    // 「T」で分割して日付と時間+タイムゾーンを取得
+    const [datePart, timeWithZone] = fullDateStr.split("T");
+    // 時間部分から時:分だけ取り出す（秒やタイムゾーンは無視）
+    const timePart = timeWithZone.slice(0,5);
+
+    setNewEventStartDate(datePart);
+    setNewEventStartTime(timePart);
+
+    setNewEventEndDate(datePart);
+    setNewEventEndTime(timePart);
+
     setShowForm(true);
   };
 
@@ -43,7 +55,8 @@ export default function Home() {
         title: 'Qiita書く',
         start: '2025-05-21',
         end: '2025-05-23',
-        backgroundColor: 'green',
+        backgroundColor: 'tan',
+        borderColor:'white',
         editable: true
     },
     {
@@ -88,21 +101,40 @@ export default function Home() {
               placeholder="Title"
             />
 
-            <input  //タスクの開始時間
-              type="text"
-              value={newEventStart} // ← dateClickで設定された日時を表示
-              onChange={(s) => setNewEventStart(s.target.value)}
-              className="w-4/5 border px-2 py-1 my-1.5 rounded bg-gray-100"
-              placeholder="Start"
-            />
+            <div className=" flex w-4/5">
+              <input  //タスクの開始日時
+                type="text"
+                value={newEventSDate} // ← dateClickで設定された日時を表示
+                onChange={(s) => setNewEventStartDate(s.target.value)}
+                className="w-4/5 border px-2 py-1 mr-2 my-1.5 rounded bg-gray-100"
+                placeholder="Start"
+              />
 
-            <input  //タスクの終了時間
-              type="text"
-              value={newEventEnd} // ← dateClickで設定された日時を表示
-              onChange={(e) => setNewEventEnd(e.target.value)}
-              className="w-4/5 border px-2 py-1 my-1.5 rounded bg-gray-100"
-              placeholder="End"
-            />
+              <input  //タスクの開始時間
+                type="text"
+                value={newEventSTime} // ← dateClickで設定された日時を表示
+                onChange={(s) => setNewEventStartTime(s.target.value)}
+                className="w-4/5 border px-2 py-1 my-1.5 rounded bg-gray-100"
+                placeholder="Start"
+              />
+            </div>
+
+            <div className=" flex w-4/5">
+              <input  //タスクの終了日時
+                type="text"
+                value={newEventEDate} // ← dateClickで設定された日時を表示
+                onChange={(s) => setNewEventEndDate(s.target.value)}
+                className="w-4/5 border px-2 py-1 mr-2 my-1.5 rounded bg-gray-100"
+                placeholder="Start"
+              />
+              <input  //タスクの終了時間
+                type="text"
+                value={newEventETime} // ← dateClickで設定された日時を表示
+                onChange={(s) => setNewEventEndTime(s.target.value)}
+                className="w-4/5 border px-2 py-1 my-1.5 rounded bg-gray-100"
+                placeholder="Start"
+              />
+            </div>
 
             <input  //タスクの色
               type="text"
