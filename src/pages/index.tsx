@@ -89,7 +89,7 @@ export default function Home() {
           onSubmit={(e) => {
               e.preventDefault(); // ページリロード防止
 
-              if (!newTitle.trim()) {
+              if (!newTitle.trim()) { //エラー表示
                 setTitleError('※ Title is required.');
                 return;
               }
@@ -133,6 +133,7 @@ export default function Home() {
             <input  //タスクのタイトル
               type="text"
               value={newTitle}
+              autoFocus
               onChange={(e) => setNewTitle(e.target.value)}
               className="w-4/5 border px-2 py-1 my-1.5 rounded bg-gray-100"
               placeholder="Title"
