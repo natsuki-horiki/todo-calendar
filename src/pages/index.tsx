@@ -23,11 +23,12 @@ const geistMono = Geist_Mono({
 
 export default function Home() {
   const [showForm, setShowForm] = useState(false); // フォームの表示状態
-  const [newEventSDate, setNewEventStartDate] = useState(''); // クリックされた日付
-  const [newEventEDate, setNewEventEndDate] = useState(''); // クリックされた日付
-  const [newEventSTime, setNewEventStartTime] = useState(''); // クリックされた日付
-  const [newEventETime, setNewEventEndTime] = useState(''); // クリックされた日付
-  const [title, setTitle] = useState(''); // イベントのタイトル入力
+  const [newTitle, setNewTitle] = useState(''); // イベントのタイトル入力
+  const [newEventSDate, setNewEventStartDate] = useState(''); // 開始日付
+  const [newEventEDate, setNewEventEndDate] = useState(''); // 終了日付
+  const [newEventSTime, setNewEventStartTime] = useState(''); // 開始時間
+  const [newEventETime, setNewEventEndTime] = useState(''); // 終了時間
+  const [newColor, setNewColor] = useState(''); //イベントの色
   
 //日付がクリックされた際の処理
   const handleDateClick = (info: DateClickArg) => {
@@ -49,32 +50,8 @@ export default function Home() {
 
   
   //表示イベント例
-  const [events,setEvents]=useState<EventInput>([
-    {
-        id: '1',
-        title: 'Qiita書く',
-        start: '2025-05-21',
-        end: '2025-05-23',
-        backgroundColor: 'tan',
-        borderColor:'white',
-        editable: true
-    },
-    {
-        id: '2',
-        title: 'Qiita投稿',
-        start: '2025-05-18T10:00:00',
-        end: '2025-05-18T15:00:00',
-        backgroundColor: 'green',
-        editable: true
-    },
-    {
-        id: '3',
-        title: '買い物',
-        start: '2025-05-20T03:00:00',
-        end: '2025-05-20T10:00:00',
-        backgroundColor: 'blue',
-        editable: true
-    },
+  const [events,setEvents]=useState<EventInput[]>([
+    //追加したイベントをここに入れて表示
   ]);
 
   return (
@@ -92,11 +69,42 @@ export default function Home() {
 
         {/* ToDo新規追加用フォーム */}
         {showForm &&(
-          <form className="border my-2 py-2 rounded">
+        <form
+          onSubmit={(e) => {
+              e.preventDefault(); // ページリロード防止
+
+              const start = `${newEventSDate}T${newEventSTime}`;
+              const end = `${newEventEDate}T${newEventETime}`;
+
+              const newEvent = {
+                id: (events.length + 1).toString(),
+                title: newTitle,
+                start,
+                end,
+                backgroundColor: newColor || 'gray',
+                editable: true,
+              };
+
+              setEvents([...events, newEvent]);
+
+              // 入力フォームをリセット
+              setNewTitle('');
+              setNewEventStartDate('');
+              setNewEventStartTime('');
+              setNewEventEndDate('');
+              setNewEventEndTime('');
+              setNewColor('');
+              setShowForm(false); // フォームを閉じる
+            }}
+            className="border my-2 py-2 rounded"
+          >
           <div className="flex flex-col items-center justify-center">
             <p className="text-lg font-bold">addition</p>
-            <input  //タスクの名称
+
+            <input  //タスクのタイトル
               type="text"
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
               className="w-4/5 border px-2 py-1 my-1.5 rounded bg-gray-100"
               placeholder="Title"
             />
@@ -138,6 +146,8 @@ export default function Home() {
 
             <input  //タスクの色
               type="text"
+              value={newColor}
+              onChange={(e) => setNewColor(e.target.value)}
               className="w-4/5 border px-2 py-1 my-1.5 rounded bg-gray-100"
               placeholder="Color"
             />
