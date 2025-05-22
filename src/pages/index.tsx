@@ -29,6 +29,8 @@ export default function Home() {
   const [newEventSTime, setNewEventStartTime] = useState(''); // 開始時間
   const [newEventETime, setNewEventEndTime] = useState(''); // 終了時間
   const [newColor, setNewColor] = useState(''); //イベントの色
+
+  const [checkedEvents, setCheckedEvents] = useState<{ [key: string]: boolean }>({}); //リスト完了チェック
   
   //日付がクリックされた際の処理
   const handleDateClick = (info: DateClickArg) => {
@@ -53,6 +55,14 @@ export default function Home() {
     const handleDelete = (id: string | number) => {
     setEvents(events.filter((event) => event.id !== id));
   };
+
+  //チェックボックス変更イベント処理
+  const toggleCheck = (id: string) => {
+    setCheckedEvents(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
   
   //表示イベント例
   const [events,setEvents]=useState<EventInput[]>([
@@ -65,12 +75,12 @@ export default function Home() {
       {/* todoリスト部分(左) */}
       <div className="w-1/4 p-4 border-r relative">
         <h2 className="text-xl font-bold mb-4 text-center">ToDoリスト</h2>
-        <button className="text-white bottom-10 right-5 py-2 px-4 rounded-full bg-gray-500 cursor-pointer absolute"
+        <button className="text-white bottom-10 right-5 py-2 px-3 rounded-full bg-gray-500 cursor-pointer absolute z-50"
           //＋ボタンでtodo新規追加フォームを開く
           onClick={()=>{
             setShowForm(true);
           }}
-        >+</button>
+        >＋</button>
 
         {/* ToDo新規追加用フォーム */}
         {showForm &&(
@@ -101,7 +111,7 @@ export default function Home() {
               setNewColor('');
               setShowForm(false); // フォームを閉じる
             }}
-            className="border my-2 py-2 rounded relative"
+            className="border my-2 py-2 rounded relative bg-amber-50"
           >
           <button //新規追加をやめる✖ボタン
           type="button"
@@ -175,21 +185,34 @@ export default function Home() {
 
         {/* 中のリスト要素 */}
         <ul className="space-y-2">
-          {events.map((event:EventInput)=>(
-            <li key={event.id}>
-              <label className="flex items-center space-x-2 relative my-1.5 py-1.5 px-1 rounded border-1">
-                <input type="checkbox" />
-                <span className="">{event.title}</span>
-                <button
-                className=" absolute right-4 cursor-pointer"
-                onClick={()=> handleDelete(event.id!)}
+          {events.map((event: EventInput) => {
+            const isChecked = checkedEvents[event.id as string];
+
+            return (
+              <label
+                key={event.id}
+                className={`group flex items-center space-x-2 relative my-1.5 py-1.5 px-1 rounded border border-gray-300 ${
+                  isChecked ? 'bg-gray-200' : ''
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={!!isChecked}
+                  onChange={() => toggleCheck(event.id as string)}
+                />
+                <span className={`${isChecked ? 'line-through text-gray-500' : ''}`}>
+                  {event.title}
+                </span>
+                <button //タスク消すボタン
+                  className="absolute right-4 text-sm text-gray-500 hidden group-hover:block cursor-pointer"
+                  onClick={() => handleDelete(event.id!)}
                 >
                   ✖
                 </button>
               </label>
-            </li>
-          ))}
-        </ul>
+            );
+          })}
+      </ul>
       </div>
       
       {/* カレンダー部分（右） */}
