@@ -24,6 +24,7 @@ const geistMono = Geist_Mono({
 export default function Home() {
   const [showForm, setShowForm] = useState(false); // フォームの表示状態
   const [newTitle, setNewTitle] = useState(''); // イベントのタイトル入力
+  const [titleError, setTitleError] = useState(''); //タイトルエラー処理
   const [newEventSDate, setNewEventStartDate] = useState(''); // 開始日付
   const [newEventEDate, setNewEventEndDate] = useState(''); // 終了日付
   const [newEventSTime, setNewEventStartTime] = useState(''); // 開始時間
@@ -74,7 +75,7 @@ export default function Home() {
     <div className="flex h-screen">
       {/* todoリスト部分(左) */}
       <div className="w-1/4 p-4 border-r relative">
-        <h2 className="text-xl font-bold mb-4 text-center">ToDoリスト</h2>
+        <h2 className="text-xl font-bold mb-4 text-center">ToDo List</h2>
         <button className="text-white bottom-10 right-5 py-2 px-3 rounded-full bg-gray-500 cursor-pointer absolute z-50"
           //＋ボタンでtodo新規追加フォームを開く
           onClick={()=>{
@@ -88,6 +89,12 @@ export default function Home() {
           onSubmit={(e) => {
               e.preventDefault(); // ページリロード防止
 
+              if (!newTitle.trim()) {
+                setTitleError('※ Title is required.');
+                return;
+              }
+
+              setTitleError(''); // エラー解除
               const start = `${newEventSDate}T${newEventSTime}`;
               const end = `${newEventEDate}T${newEventETime}`;
 
@@ -130,6 +137,9 @@ export default function Home() {
               className="w-4/5 border px-2 py-1 my-1.5 rounded bg-gray-100"
               placeholder="Title"
             />
+            {titleError && (
+              <p className="text-sm text-red-500 w-4/5 text-left">{titleError}</p>
+            )}
 
             <div className=" flex w-4/5">
               <input  //タスクの開始日時
@@ -137,14 +147,14 @@ export default function Home() {
                 value={newEventSDate} // ← dateClickで設定された日時を表示
                 onChange={(s) => setNewEventStartDate(s.target.value)}
                 className="w-4/5 border px-2 py-1 mr-2 my-1.5 rounded bg-gray-100"
-                placeholder="Start"
+                placeholder="Start Date"
               />
               <input  //タスクの開始時間
                 type="text"
                 value={newEventSTime} // ← dateClickで設定された日時を表示
                 onChange={(s) => setNewEventStartTime(s.target.value)}
                 className="w-4/5 border px-2 py-1 my-1.5 rounded bg-gray-100"
-                placeholder="Start"
+                placeholder="Start Time"
               />
             </div>
 
@@ -154,14 +164,14 @@ export default function Home() {
                 value={newEventEDate} // ← dateClickで設定された日時を表示
                 onChange={(s) => setNewEventEndDate(s.target.value)}
                 className="w-4/5 border px-2 py-1 mr-2 my-1.5 rounded bg-gray-100"
-                placeholder="Start"
+                placeholder="End Date"
               />
               <input  //タスクの終了時間
                 type="text"
                 value={newEventETime} // ← dateClickで設定された日時を表示
                 onChange={(s) => setNewEventEndTime(s.target.value)}
                 className="w-4/5 border px-2 py-1 my-1.5 rounded bg-gray-100"
-                placeholder="Start"
+                placeholder="End Time"
               />
             </div>
 
