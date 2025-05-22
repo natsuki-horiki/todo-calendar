@@ -33,7 +33,6 @@ export default function Home() {
   //日付がクリックされた際の処理
   const handleDateClick = (info: DateClickArg) => {
     const fullDateStr = info.dateStr; // 例: "2025-05-19T04:00:00+09:00"
-    alert(`クリックされた日付: ${fullDateStr}`);
     // 「T」で分割して日付と時間+タイムゾーンを取得
     const [datePart, timeWithZone] = fullDateStr.split("T");
     // 時間部分から時:分だけ取り出す（秒やタイムゾーンは無視）
@@ -198,6 +197,8 @@ export default function Home() {
         <FullCalendar
           plugins={[timeGridWeek, interactionPlugin]}
           initialView="timeGridWeek"
+          slotMinTime="06:00:00"
+          slotMaxTime="30:00:00"
           events={events} //イベントの読み込み
           dateClick={(info) => handleDateClick(info)} //日付クリックイベント
         />
