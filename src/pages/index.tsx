@@ -30,15 +30,17 @@ export default function Home() {
   const [newEventETime, setNewEventEndTime] = useState(''); // 終了時間
   const [newColor, setNewColor] = useState(''); //イベントの色
   
-//日付がクリックされた際の処理
+  //日付がクリックされた際の処理
   const handleDateClick = (info: DateClickArg) => {
     const fullDateStr = info.dateStr; // 例: "2025-05-19T04:00:00+09:00"
     alert(`クリックされた日付: ${fullDateStr}`);
     // 「T」で分割して日付と時間+タイムゾーンを取得
     const [datePart, timeWithZone] = fullDateStr.split("T");
     // 時間部分から時:分だけ取り出す（秒やタイムゾーンは無視）
-    const timePart = timeWithZone.slice(0,5);
-
+    let timePart = "";
+    if(timeWithZone!=null){
+      timePart = timeWithZone.slice(0,5);
+    }
     setNewEventStartDate(datePart);
     setNewEventStartTime(timePart);
 
@@ -48,6 +50,10 @@ export default function Home() {
     setShowForm(true);
   };
 
+  //タスクを消す処理
+    const handleDelete = (id: string | number) => {
+    setEvents(events.filter((event) => event.id !== id));
+  };
   
   //表示イベント例
   const [events,setEvents]=useState<EventInput[]>([
@@ -96,11 +102,18 @@ export default function Home() {
               setNewColor('');
               setShowForm(false); // フォームを閉じる
             }}
-            className="border my-2 py-2 rounded"
+            className="border my-2 py-2 rounded relative"
           >
+          <button //新規追加をやめる✖ボタン
+          type="button"
+          className=" absolute right-5 text-lg cursor-pointer"
+          onClick={()=>setShowForm(false)}
+          >
+            ✖
+          </button>
+
           <div className="flex flex-col items-center justify-center">
             <p className="text-lg font-bold">addition</p>
-
             <input  //タスクのタイトル
               type="text"
               value={newTitle}
@@ -117,7 +130,6 @@ export default function Home() {
                 className="w-4/5 border px-2 py-1 mr-2 my-1.5 rounded bg-gray-100"
                 placeholder="Start"
               />
-
               <input  //タスクの開始時間
                 type="text"
                 value={newEventSTime} // ← dateClickで設定された日時を表示
@@ -152,7 +164,7 @@ export default function Home() {
               placeholder="Color"
             />
 
-            <input
+            <input  //タスク追加ボタン
               className="w-1/5 border px-2 py-1 my-1.5 rounded cursor-pointer bg-gray-100"
               type="submit"
               value="add"
@@ -166,9 +178,15 @@ export default function Home() {
         <ul className="space-y-2">
           {events.map((event:EventInput)=>(
             <li key={event.id}>
-              <label className="flex items-center space-x-2">
+              <label className="flex items-center space-x-2 relative my-1.5 py-1.5 px-1 rounded border-1">
                 <input type="checkbox" />
-                <span>{event.title}</span>
+                <span className="">{event.title}</span>
+                <button
+                className=" absolute right-4 cursor-pointer"
+                onClick={()=> handleDelete(event.id!)}
+                >
+                  ✖
+                </button>
               </label>
             </li>
           ))}
